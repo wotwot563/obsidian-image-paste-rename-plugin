@@ -1,16 +1,29 @@
 import { App, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
-interface MyPluginSettings {
-	mySetting: string;
+interface PasterPluginSettings {
+	PasterPluginSetting: string;
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: 'default'
+const DEFAULT_SETTINGS: PasterPluginSettings = {
+	PasterPluginSetting: 'default'
 }
 
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+export default class PasterPlugin extends Plugin {
+	settings: PasterPluginSettings;
+	
+	async loadSettings() {
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+	}
 
+	async saveSettings() {
+		await this.saveData(this.settings);
+	}
+	
+	onunload() {
+		console.log('unloading plugin');
+	}
+	
+	
 	async onload() {
 		console.log('loading plugin');
 
@@ -53,17 +66,9 @@ export default class MyPlugin extends Plugin {
 		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
 	}
 
-	onunload() {
-		console.log('unloading plugin');
-	}
+	
 
-	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-	}
 
-	async saveSettings() {
-		await this.saveData(this.settings);
-	}
 }
 
 class SampleModal extends Modal {
@@ -83,9 +88,9 @@ class SampleModal extends Modal {
 }
 
 class SampleSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
+	plugin: PasterPlugin;
 
-	constructor(app: App, plugin: MyPlugin) {
+	constructor(app: App, plugin: PasterPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
